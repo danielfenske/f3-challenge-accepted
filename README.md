@@ -20,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # Firing up the back-end
 
-To run the back-edn development server, run:
+To run the back-end development server, run:
 
 ```bash
 npm run server
