@@ -6,20 +6,19 @@ This repository is intended to get a web-application to a solid starting point. 
 
 It is intended to be developed, shipped, and run using Docker and hosted on AWS.
 
-# Front-end
+# Firing up the front-end
 
 ## Getting Started
 
 First, to run the front-end development server, run:
 
 ```bash
-npm run dev // TODO change this to `npm run client` when the server is set up
+npm run client 
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-
-# Back-end
+# Firing up the front-end
 
 TODO
 
