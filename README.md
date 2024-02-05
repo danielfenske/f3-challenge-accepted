@@ -18,7 +18,7 @@ npm run client
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-# Firing up the front-end
+# Firing up the back-end
 
 TODO
 
