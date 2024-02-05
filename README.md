@@ -18,9 +18,15 @@ npm run client
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-# Firing up the front-end
+# Firing up the back-end
 
-TODO
+To run the back-end development server, run:
+
+```bash
+npm run server
+```
+
+Test your connection in Postman by sending a route to [http://localhost:9000](http://localhost:9000).
 
 # Docker
 
