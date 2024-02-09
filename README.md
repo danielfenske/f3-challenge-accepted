@@ -20,7 +20,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Rather than installing Postgres locally, this project template containerizes Postgres and Node in Docker by utilizing the Postgres Docker Official Image and NodeJS Official Image. Below are step-by-step instructions on getting this set up:
 
-**🚨 Important:** Reference the `.example-env` file as an example for setting up your private `.env` file.
+**🚨 Important:** Reference the `.example-env` file as an example for setting up your `.env` file locally.
 
 ## Step 1: Download Docker
 
@@ -34,23 +34,11 @@ docker pull postgres
 ```
 *Note: this is the equivalent of installing Postgres locally, but we're instead installing it within Docker! No need to run `npm install pg` at any point in time.
 
-2. Spin up a Postgres container for your project by running the following command:*
-```bash
-docker run --name [YOUR PROJECT NAME] -e POSTGRES_PASSWORD=[YOUR DESIGNATED PASSWORD] -e POSTGRES_USER=[YOUR DESIGNATED USERNAME]  -p [YOUR DESIGNATED LOCAL PORT]:[YOUR DESIGNATED DOCKER PORT] -v [YOUR DESIGNATED VOLUME NAME]:[YOUR DESIGNATED LOCATION OF THE VOLUME] -d postgres
-```
-
-*Examples for the above command:
-* [YOUR PROJECT NAME] --> project-template
-* [YOUR DESIGNATED PASSWORD] --> examplePassword
-* [YOUR DESIGNATED USERNAME] --> exampleUsername
-* [YOUR DESIGNATED LOCAL PORT]:[YOUR DESIGNATED DOCKER PORT] --> 4321:4321
-* [YOUR DESIGNATED VOLUME NAME]:[YOUR DESIGNATED LOCATION OF THE VOLUME] --> pgdata:/var/lib/postgresql/data
-
-After running this command, it should retur the container ID for your newly-created Postgres container, which is confirmation of a successful operation. You should also be able to see your newly-created container and volume within Docker Desktop, matching the names provided in the command.
+2. Configure your `.env` file, which will need to be created locally and should live in the root directory of `/server`. Reference the `.example-env` file for the values you'll need to update, as these will be referenced in `docker-compose.yml`.
 
 ## Step 3: Set up your NodeJS container
 
-1. Since `node_modules` (and friends) are included in the `.gitignore` file, you'll have to run this command to get all necessary packages locally:
+1. Initialize npm in your project
 ```bash
 npm init
 ```
@@ -61,14 +49,14 @@ npm init
 This project template is setting up the NodeJS container with the help of instructions listed in the project's `Dockerfile`. 
 
 Here's what's going on in there:
-* `FROM node:12` is telling Docker that we want to pull version 12 of the Node Docker Image Official Image.
+* `FROM node:16.13.1-alpine3.14` is telling Docker that we want to pull version 12 of the Node Docker Image Official Image.
 * `WORKDIR /app` is defining the working directory, which is where application code and files will be placed.
-* `COPY package*.json ./` is copying over the contents in `package.json` and `package-lock.json` from the project over to the `/app` directory in the container. This is important because it contains dependencies like `express`, which is used in this project.
+* `["package.json", "package-lock.json", ".env", "./"]` is copying over the contents from the project over to the `/app` directory in the container. This is important because it contains dependencies like `express`, which is used in this project.
 * `RUN npm install` installs the Node.js dependencies based on the `package.json` and `package-lock.json` files copied in the previous step.
 * `COPY . .` copies the rest of the application code from the host machine to the `/app` directory inside the container. This includes all the application source code and files.
 * `ENV PORT=9090` sets the environment variable PORT to the value 9090. This is often used to specify the port on which the Node.js application will listen, and should match the variable you specify in your .env file.
 * `EXPOSE 9090` informs Docker that the application inside the container will use port 9090. However, this doesn't actually publish the port; it's more of a documentation feature, so make sure it matches the variable you specify in your .env file.
-* `CMD [ "npm", "start" ]` specifies the default command to run when the container starts. In this case, it's running the npm start command to start the Node.js application.
+* `CMD [ "npm", "run", "dev" ]` specifies the default command to run when the container starts. In this case, it's running the `npm run dev` command (from within the container) to start the Node.js application.
 
 Before we execute the command to this container, it's recommended that you create an account at [hub.docker.com](hub.docker.com) as a point of reference for defining your NodeJS container.
 
@@ -84,7 +72,7 @@ Check your Docker Desktop application. You should see the name you just specifie
 docker run docker.io/[YOUR DOCKER USERNAME]/project-template:1.0    
 ```
 
-The terminal should output something like "Example app listening at http://localhost:[port #]"
+The terminal should output something like "Example app listening at http://localhost:[YOUR SERVER PORT]"
 
 ## Step 4: Running Postgres and Node together using `docker-compose.yml`
 
