@@ -1,8 +1,8 @@
-FROM node:12
+FROM node:16.13.1-alpine3.14
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ["package.json", "package-lock.json", "tsconfig.json", ".env", "./"]
 
 RUN npm install
 
@@ -12,4 +12,4 @@ ENV PORT=9090
 
 EXPOSE 9090
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run" , "dev"]
