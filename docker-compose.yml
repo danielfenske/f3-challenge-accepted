@@ -1,37 +1,42 @@
 version: '3.8'
 services:
   db:
+    container_name: db
     env_file: ./.env
     image: postgres
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - 'data:/data/db'
     restart: always
     environment:
+      - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    
     ports:
       - '5433:${DB_PORT}'
     
   server:
+    container_name: server
+    restart: always
     depends_on:
       - db
     env_file: ./.env
-    restart: always
     build: ./server
     ports:
       - '9090:${SERVER_PORT}'
+    volumes:
+      - '.:/usr/src/app'
 
   client:
+    container_name: client
     build: ./client
     env_file: ./.env
     ports:
       - '3000:${CLIENT_PORT}'
     volumes:
-      - './client/:/app'
-      - '/client/app/node_modules'
+      - '.:/usr/src/app'
+      - '/home/app/node_modules'
     stdin_open: true
     tty: true
     
 volumes:
-  pgdata:
+  data: {}
