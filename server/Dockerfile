@@ -1,8 +1,10 @@
 FROM node:16.13.1-alpine3.14
 
+RUN npm install -g nodemon
+
 WORKDIR /app
 
-COPY ["package.json", "package-lock.json", "tsconfig.json", ".env", "./"]
+COPY ["package.json", "package-lock.json", "tsconfig.json", "./"]
 
 RUN npm install
 

@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Mac Auto-Generated Files and code editor files
+.DS_Store
+.DS_STORE/
+
 # dependencies
 /client/node_modules
 /server/node_modules
@@ -27,8 +31,7 @@
 /client/yarn-error.log*
 
 # local env files
-/client/.env*.local
-/server/.env
+.env
 
 # vercel
 /client/.vercel
