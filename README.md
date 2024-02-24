@@ -1,105 +1,105 @@
-This repository is intended to get a web-application to a solid starting point. The technology stack for this template is:
-* Postgresql
-* Express
-* React
-* Node
+This repository is intended to get a web-application to a solid starting point, and is built using: React, Node, Express, & Postgresql. It is intended to be developed, shipped, and run using Docker. 
 
-It is intended to be developed, shipped, and run using Docker and hosted on AWS.
+This project template containerizes your client (React), server (Node/Express), and database (Postgres) in Docker by utilizing a `docker-compose.yml` script and the official Docker images for these technologies, when applicable.
 
-# Firing up the client
+Below are step-by-step instructions on getting this set up:
 
-First, to run the front-end development server, run:
+# Prerequisites
 
-```bash
-npm run client 
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-# Firing up the server
-
-Rather than installing Postgres locally, this project template containerizes Postgres and Node in Docker by utilizing the Postgres Docker Official Image and NodeJS Official Image. Below are step-by-step instructions on getting this set up:
-
-**🚨 Important:** Reference the `.example-env` file as an example for setting up your `.env` file locally.
-
-## Step 1: Download Docker
+## Download Docker
 
 Make sure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is installed on your computer. You can check this by running `docker ps` in your terminal. If it returns columns like `CONTAINER ID`, `IMAGE`, etc., then you're in business!
 
-## Step 2: Set up your Postgres Docker container
+## Download pgadmin4
 
-1. Pull the Postgres Docker Official Image:*
-```bash
-docker pull postgres
+pgadmin4 is the recommended user interface for evaluating the project's database. More instructions on how to configure your
+project's database with this application will follow. If you have home brew installed on your computer, you can simply execute this command:
 ```
-*Note: this is the equivalent of installing Postgres locally, but we're instead installing it within Docker! No need to run `npm install pg` at any point in time.
+brew install pgadmin4
+```
 
-2. Configure your `.env` file, which will need to be created locally and should live in the root directory of `/server`. Reference the `.example-env` file for the values you'll need to update, as these will be referenced in `docker-compose.yml`.
+## Initialize `npm`
 
-## Step 3: Set up your NodeJS container
-
-1. Initialize npm in your project
-```bash
+1. Navigate to your `/client` directory and execute the following command:
+```
 npm init
 ```
+2. Navigate to your `/server` directory and execute the same command as above.
 
-2. Build your NodeJS image.
+# Project setup
 
-**Some background:**
-This project template is setting up the NodeJS container with the help of instructions listed in the project's `Dockerfile`. 
+**🚨 Important:** Reference the `.example-env` file as an example for setting up your `.env` file locally.
 
-Here's what's going on in there:
-* `FROM node:16.13.1-alpine3.14` is telling Docker that we want to pull version 12 of the Node Docker Image Official Image.
-* `WORKDIR /app` is defining the working directory, which is where application code and files will be placed.
-* `["package.json", "package-lock.json", ".env", "./"]` is copying over the contents from the project over to the `/app` directory in the container. This is important because it contains dependencies like `express`, which is used in this project.
-* `RUN npm install` installs the Node.js dependencies based on the `package.json` and `package-lock.json` files copied in the previous step.
-* `COPY . .` copies the rest of the application code from the host machine to the `/app` directory inside the container. This includes all the application source code and files.
-* `ENV PORT=9090` sets the environment variable PORT to the value 9090. This is often used to specify the port on which the Node.js application will listen, and should match the variable you specify in your .env file.
-* `EXPOSE 9090` informs Docker that the application inside the container will use port 9090. However, this doesn't actually publish the port; it's more of a documentation feature, so make sure it matches the variable you specify in your .env file.
-* `CMD [ "npm", "run", "dev" ]` specifies the default command to run when the container starts. In this case, it's running the `npm run dev` command (from within the container) to start the Node.js application.
+Create a `.env` file locally in the root directory of your project. See the `.example-env` file for the values you'll need to update, as these will be reference in `docker-compose.yml`.
 
-Before we execute the command to this container, it's recommended that you create an account at [hub.docker.com](hub.docker.com) as a point of reference for defining your NodeJS container.
+## Setting up your client
 
-Execute this command to build your NodeJs container, where `[YOUR DOCKER USERNAME]` is the Docker username you just created and `project-template` is the name of your container. `:1.0` is an optional addition that just helps with specifying which "version" you're on.
+Set `CLIENT_PORT` equal to `3000` in your `.env` file. This is the default, predetermined port prescribed by NextJs to run the React server.
 
-```bash
-docker build -t [YOUR DOCKER USERNAME]/project-template:1.0 .  
-```
+You can test this connection by navigating into the `/client` directory and running `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. When everything is setup, you won't need to run this command, as Docker will take care of firing up the entire project, which will be covered later on.
 
-Check your Docker Desktop application. You should see the name you just specified in your list of Docker images. You can also verify a successful build by running this command in your terminal:
+## Setting up your server
 
-```bash
-docker run docker.io/[YOUR DOCKER USERNAME]/project-template:1.0    
-```
+### Node
 
-The terminal should output something like "Example app listening at http://localhost:[YOUR SERVER PORT]"
+Set `SERVER_PORT` equal to your desired port. Be sure to check that the value you choose isn't being used by an already-open or already-existing port. Similar to setting up our client, you can test this connection by navigating into the `/server` directory and running `npm run dev`. You should see a log in your terminal that says "Server is listening at http://localhost:[YOUR PORT NUMBER]".
 
-## Step 4: Running Postgres and Node together using `docker-compose.yml`
+### Postgres
 
-Now that Postgres and NodeJS have their own respective containers in Docker, you can run the command below to spin everything up (or tear everything down) at once:
+Configure your `.env` to match what's in `.example-env` file under the `#Database` comment. Note that all values should be updated *except* for `DB_PORT`, as this is the default port used by Postgres.
+
+# Firing up your application using `docker-compose.yml`
+
+**🚨 Important:** Make sure what you have declared as variables in your `.env` file match the names declared in your `docker-compose.yml` and `Dockerfile` files. The terminal logs should clearly outline this as an issue, if variables do not match when firing up the application.
+
+Now that your client, server, and database have their own respective containers in Docker, you can run the command below to spin everything up (or tear everything down) at once:
 
 To spin up Postgres and NodeJS together:
-```bash
+```
 docker compose up
 ```
 
 To tear it all down:
-```bash
+```
 docker compose down
 ```
 
 **🚨 Important: rebuilding containers**
 
-If you, at any time, make changes to the files in your the `/server` directory of your project and want to see those changes reflected in your container, you need to run:
+Whenever you make changes to the files in your the `/server` or `/client` directory of your project and want to see those changes reflected in your container, you need to run:
 
-```bash
+TODO: Make nodemon do this work instead
+
+```
 docker compose build
 ```
 
 And that's it! You should now be set up to successfully fire up the back-end portion of your project.
 
-# AWS
-TODO
+At this point in the project, you should see your project's containers up and running in your Docker interface:
+![Container running](./screenshots/container-running.png)
+(Shown in Orbstack)
+
+## Setting up pgadmin4
+
+Once everything within the project directory is configured, you can now interact with your database through pgadmin4's application interface as the Docker container was running. Reference the screenshot below for values you'll have to update to add your database and interact with it:
+
+1. Register server:
+
+![Register server](./screenshots/pgadmin4-setup.png)
+
+3. Click save.
+
+4. Navigate to "Connection" tab.
+
+2. Add your server credentials:
+
+![Add credentials](./screenshots/pgadmin4-setup2.png)
+
+Click save.
 
 # Setup troubleshooting
-See `TROUBLESHOOTING.md` for helpful tips on addressing errors you may run into while setting up your project.
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for helpful tips on addressing errors you may run into while setting up your project.
+
+# Behind the scenes
+See [LEARNING.md](LEARNING.md) to learn more about what's going on behind the scenes for `docker-compose.yml` to be the only command required for firing up the project.
